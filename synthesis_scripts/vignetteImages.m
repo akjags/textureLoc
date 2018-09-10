@@ -5,7 +5,7 @@
 %
 %     Given a directory containing images, generate a vignetted version of
 %     each of those images and save it to the specified output directory.
-function vignetteImages(inputDir, outputDir)
+function vignetteImages(inputDir, outputDir, verbose)
 
 if ieNotDefined('inputDir')
   inputDir = '~/proj/TextureSynthesis/out_bw/v2';
@@ -13,11 +13,15 @@ end
 if ieNotDefined('outputDir')
   outputDir = '~/proj/TextureSynthesis/out_bw_vig/v2';
 end
+if ieNotDefined('verbose')
+  verbose = 1;
+end
 
-direc = dir([inputDir '/*.jpg']);
+direc = dir([inputDir '/*.png']);
 imNames = {direc.name};
 
 %%
+
 %disppercent(-inf, sprintf('Generating and saving vignette images'));
 parfor imI = 1:length(imNames)
   im = imread([inputDir '/' imNames{imI}]);
@@ -36,8 +40,8 @@ parfor imI = 1:length(imNames)
   end
   
   imwrite(newim, [outputDir '/' imNames{imI}]);
-  disp(sprintf('Vignetted and saved image: %s', imNames{imI}));
-  %disppercent(imI / length(imNames));
+  if verbose
+    disp(sprintf('Vignetted and saved image: %s', imNames{imI}));
+  end
 end
-%disppercent(inf);
 

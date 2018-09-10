@@ -8,18 +8,21 @@
 %
 function generatePhaseScramble(origImPath, outDirPath)
 
-orig_ims = dir([origImPath '/*.jpg']);
+orig_ims = dir([origImPath '/*.png']);
 orig_ims = {orig_ims.name};
 
+disppercent(-inf, sprintf('(generatePhaseScramble) Phase scrambling images in directory %s', origImPath));
 for imI = 1:length(orig_ims)
   
   imPath = [origImPath '/' orig_ims{imI}];
-  disp(sprintf('Phase scrambling image: %s', imPath));
   
   im = phaseScrambleIm(imPath)./256;
   
-  saveName = sprintf('%s/noise_%s', outDirPath, orig_ims{imI});
-  imwrite(im, saveName, 'JPG');
-  disp(sprintf('Saved noise_%s to %s', orig_ims{imI}, outDirPath));
+  imname = strsplit(orig_ims{imI}, '_');
+  imname = strjoin({imname{2:end}}, '_'); % get the part of the filename after the pool layer
+  saveName = sprintf('%s/noise_%s', outDirPath, imname);
+  imwrite(im, saveName, 'PNG');
+  disppercent(imI / length(orig_ims));
 end
 
+disppercent(inf);
