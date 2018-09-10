@@ -3,7 +3,7 @@
 %
 %  Must pass in v with the correlation analysis loaded!
 %
-function [modIdx, signalAmp] = analyzeTextureBlocks(v,roiName, scan, group, r2cutoff, plotFigs)
+function [modIdx, signalAmp] = analyzeTextureBlocks(v, roiName, scan, group, r2cutoff, plotFigs)
 
 if ieNotDefined('v');
   % Initialize mlr view
@@ -29,11 +29,8 @@ roi = loadROITSeries(v, roiName, scan);
 tSeries = roi.tSeries;
 
 % Load analysis
+v = loadAnalysis(v, 'corAnal/corAnal.mat');
 overlays = viewGet(v, 'overlays');
-if length(overlays) < 1
-  v = loadAnalysis(v, 'corAnal/corAnal.mat');
-  overlays = viewGet(v, 'overlays');
-end
 co_map = overlays(1).data{scan};
 
 blockLen = 9*2;
@@ -140,5 +137,5 @@ disp(sprintf('ROI Amplitudes: %.03f', roi_amp));
 disp(sprintf('Signal Amplitude: %.03f', signalAmp));
 
 modIdx = roi_amp;
-%deleteView(v);
+deleteView(v);
 %%
