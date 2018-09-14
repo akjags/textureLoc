@@ -4,7 +4,7 @@ if ieNotDefined('group')
   group = 'MotionComp';
 end
 if ieNotDefined('scans')
-  scans = 5:20;
+  scans = 2:2:8;
 end
 
 v = newView;
@@ -13,32 +13,52 @@ v = loadAnalysis(v, 'corAnal/corAnal.mat');
 
 %% Loop through each group and calculate mod idx for each ROI
 % Get the stimulus image on left and right sides from stimfile
-left_rois = {'l_v1', 'l_v2'};
-right_rois = {'r_v1', 'r_v2'};
+left_rois = {'lV1', 'lV2', 'lV3', 'lV4'};
+right_rois = {'rV1', 'rV2', 'rV3', 'rV4'};
 
 r2cutoff = .05;
 mod = struct();
 for scan = scans
   v = viewSet(v, 'curScan', scan);
   stimfile = viewGet(v, 'stimfile');
-  r_img = stimfile{1}.stimulus.runImageRight; % contralateral 
-  l_img = stimfile{1}.stimulus.runImageLeft;
-  if ~isfield(mod, r_img); mod.(r_img) = struct(); end
-  if ~isfield(mod, l_img); mod.(l_img) = struct(); end
+  img = stimfile{1}.stimulus.runImage; % contralateral 
+  if ~isfield(mod, img); mod.(img) = struct(); end
     
   for li = 1:length(left_rois)
     roi = left_rois{li};
     [modIdx, ~] = analyzeTextureBlocks(v, roi, scan, group, r2cutoff, 0);
-    mod.(r_img) = append_struct_vec(mod.(r_img), roi(3:end), modIdx);
+    mod.(img) = append_struct_vec(mod.(img), roi(2:end), modIdx);
   end
   for ri = 1:length(right_rois)
     roi = right_rois{ri};
     
     [modIdx, ~] = analyzeTextureBlocks(v, roi, scan, group, r2cutoff, 0);
-    mod.(l_img) = append_struct_vec(mod.(l_img), roi(3:end), modIdx);
+    mod.(img) = append_struct_vec(mod.(img), roi(2:end), modIdx);
   end
 end
 
+%%
+stims = fields(mod);
+rois = fields(mod.(stims{1}));
+modArr = zeros(length(stims), length(rois));
+for si = 1:length(stims)
+  stim = stims{si};
+  for ri = 1:length(rois)
+    roi = rois{ri};
+    modArr(si, ri) = mean(mod.(stim).(roi));
+  end
+end
+   
+%% Plot Mod indexes
+figure;
+bar(modArr);
+set(gca, 'XTickLabel', stims);
+set(gca, 'FontSize', 14);
+legend(rois);
+title('Texture (Pool2) Modulation by Image', 'FontSize', 18);
+ylabel('Modulation Index');
+
+%%
 keyboard
 
 %%
