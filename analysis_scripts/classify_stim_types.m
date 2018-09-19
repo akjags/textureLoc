@@ -10,7 +10,7 @@ if ieNotDefined('group')
   group = 'Concatenation';
 end
 
-r2cutoff = .1;
+r2cutoff = .2;
 
 v = newView;
 v = viewSet(v, 'curGroup', group);
@@ -82,5 +82,6 @@ bar(roi_acc); hold on; hline(0.5);
 ylim([0 1]);
 set(gca, 'XTickLabel', roiList);
 ylabel('Classification Accuracy');
-title('MVPA: Texture vs Noise by ROI');
+set(gca, 'FontSize', 14);
+%title('MVPA: Texture vs Noise by ROI');
 keyboard

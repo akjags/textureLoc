@@ -4,7 +4,7 @@ if ieNotDefined('group')
   group = 'MotionComp';
 end
 if ieNotDefined('scans')
-  scans = 2:2:8;
+  scans = 1:2:8;
 end
 
 v = newView;
@@ -15,26 +15,23 @@ v = loadAnalysis(v, 'corAnal/corAnal.mat');
 % Get the stimulus image on left and right sides from stimfile
 left_rois = {'lV1', 'lV2', 'lV3', 'lV4'};
 right_rois = {'rV1', 'rV2', 'rV3', 'rV4'};
+rois = {'V1', 'V2', 'V3', 'V4'};
 
-r2cutoff = .05;
+r2cutoff = .15;
+
 mod = struct();
 for scan = scans
   v = viewSet(v, 'curScan', scan);
   stimfile = viewGet(v, 'stimfile');
   img = stimfile{1}.stimulus.runImage; % contralateral 
   if ~isfield(mod, img); mod.(img) = struct(); end
-    
-  for li = 1:length(left_rois)
-    roi = left_rois{li};
+
+  for ri = 1:length(rois)
+    roi = rois{ri};
     [modIdx, ~] = analyzeTextureBlocks(v, roi, scan, group, r2cutoff, 0);
-    mod.(img) = append_struct_vec(mod.(img), roi(2:end), modIdx);
+    mod.(img) = append_struct_vec(mod.(img), roi, modIdx);
   end
-  for ri = 1:length(right_rois)
-    roi = right_rois{ri};
     
-    [modIdx, ~] = analyzeTextureBlocks(v, roi, scan, group, r2cutoff, 0);
-    mod.(img) = append_struct_vec(mod.(img), roi(2:end), modIdx);
-  end
 end
 
 %%
@@ -55,7 +52,7 @@ bar(modArr);
 set(gca, 'XTickLabel', stims);
 set(gca, 'FontSize', 14);
 legend(rois);
-title('Texture (Pool2) Modulation by Image', 'FontSize', 18);
+title('Texture (P-S) Modulation by Image', 'FontSize', 18);
 ylabel('Modulation Index');
 
 %%
