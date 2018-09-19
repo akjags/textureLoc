@@ -14,13 +14,11 @@ if ieNotDefined('out_dir')
   out_dir = tex_dir;
 end
 if ieNotDefined('dirname');
-  dirname = 'out_fzs';
+  dirname = 'fzs';
 end
 
 wd = '~/proj/TextureSynthesis';
 tex_dir = sprintf('%s/stimuli/%s/tex', wd, dirname);
-skip=1
-if skip == 0
 %% Download textures
 disp(sprintf('The number of textures generated in that directory is : '));
 system(sprintf('ssh akshayj@login.sherlock.stanford.edu "ls ~/TextureSynthesis/%s/*/*.png | wc -l"', dirname));
@@ -55,9 +53,8 @@ for di = 1:length(d)
   disppercent(di / length(d));
 end
 disppercent(inf);
-end
 
-
+%% Find path to original images
 img_dir = sprintf('%s/stimuli/%s/orig', wd, dirname);
 if ~exist(img_dir)
   x = input('(postprocess_texture) Original image directory not found. Enter full path to orig im directory: ', 's');
@@ -68,6 +65,7 @@ if ~exist(img_dir)
   end
 end
 
+%% Run luminance equalization
 x = input('(postprocess_texture) Running luminance histogram equalization. Are you okay with overwriting raw images? Press y to proceed or n to skip luminance histogram equalization : ', 's');
 if strcmp(x, 'y')
   a = dir([tex_dir '/*.png']);
@@ -103,7 +101,6 @@ if strcmp(x, 'y')
   generatePhaseScramble(tex_dir, noise_out_dir);
 end
 
-keyboard
 
 x = input('Do you want to vignette the TEXTURE images and save them to the tex_vig folder? ', 's');
 if strcmp(x, 'y')
@@ -113,8 +110,8 @@ if strcmp(x, 'y')
 end
 
 x = input('Do you want to vignette the NOISE images and save them to the noise_vig folder? ', 's');
-if strcmp(x 'y')
-  noise_vig_dir = [wd '/stimuli/' dirname '/tex_vig'];
+if strcmp(x, 'y')
+  noise_vig_dir = [wd '/stimuli/' dirname '/noise_vig'];
   mkdir(noise_vig_dir);
   vignetteImages(noise_out_dir, noise_vig_dir, 0);
 end
