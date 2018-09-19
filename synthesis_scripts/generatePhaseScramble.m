@@ -16,10 +16,11 @@ for imI = 1:length(orig_ims)
   
   imPath = [origImPath '/' orig_ims{imI}];
   
-  im = phaseScrambleIm(imPath)./256;
+  im = phaseScrambleIm(imPath);
   
-  imname = strsplit(orig_ims{imI}, '_');
-  imname = strjoin({imname{2:end}}, '_'); % get the part of the filename after the pool layer
+  imname = orig_ims{imI};
+  %imname = strsplit(orig_ims{imI}, '_');
+  %imname = strjoin({imname{2:end}}, '_'); % get the part of the filename after the pool layer
   saveName = sprintf('%s/noise_%s', outDirPath, imname);
   imwrite(im, saveName, 'PNG');
   disppercent(imI / length(orig_ims));

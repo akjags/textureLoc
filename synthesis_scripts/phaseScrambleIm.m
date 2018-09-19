@@ -3,6 +3,7 @@
 %   Function to scramble the phase of an image.
 %    Takes fourier transform, adds random phase, and returns inverse
 %    fourier transform.
+%   Also equalizes the luminance distribution to that of the original.
 %
 %    by: akshay jagadeesh
 %  date: 08/18/2018
@@ -24,10 +25,12 @@ for i = 1:size(im,3)
   imf(:,:,i) = reconstructFromHalfFourier(d);
 end
 
+imf = imf./256;
+
 if plotFig
   figure;
   subplot(122); imshow(im./256); title('Original');
-  subplot(121); imshow(imf./256); title('Phase Scrambled');
+  subplot(121); imshow(imf); title('Phase Scrambled');
 end
 
 %%
